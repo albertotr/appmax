@@ -1940,7 +1940,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         _this.$router.push("/");
       })["catch"](function (error) {
-        alert(error);
+        alert(error.response.data.error);
       });
     }
   },
@@ -1991,7 +1991,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      selectComponent: "products"
+      selectComponent: "transaction"
     };
   },
   methods: {
@@ -2026,6 +2026,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2346,8 +2353,151 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "transaction"
+  name: "transaction",
+  data: function data() {
+    return {
+      productData: {
+        sku: null,
+        qtd: null
+      },
+      qtdInvalid: false,
+      skuInvalid: false,
+      modalTitle: "",
+      addType: null
+    };
+  },
+  methods: {
+    onSave: function onSave() {
+      var _this = this;
+
+      var tk = localStorage.getItem("token");
+      var formData = this.productData;
+      var url = "api/down";
+      if (this.addType == "add") url = "api/up";
+      var param = {
+        method: typeRequest,
+        url: url,
+        headers: {
+          Authorization: "Bearer ".concat(tk)
+        },
+        data: formData
+      };
+      axios(param).then(function (result) {
+        console.log(result);
+        var modal = _this.$refs.editModal;
+        $(modal).modal("hide");
+      })["catch"](function (error) {
+        alert(error.message);
+      });
+    },
+    onAdd: function onAdd() {
+      // abre o modal de edicao
+      this.modalTitle = "Adicionar produto em estoque";
+      this.addType = "add";
+      var modal = this.$refs.transModal;
+      $(modal).modal("show");
+    },
+    onSend: function onSend() {
+      // abre o modal de edicao
+      this.modalTitle = "Enviar produto";
+      this.addType = "send";
+      var modal = this.$refs.transModal;
+      $(modal).modal("show");
+    }
+  }
 });
 
 /***/ }),
@@ -38476,7 +38626,7 @@ var render = function() {
       _c("h4", [_vm._v("Lista de Produtos")]),
       _vm._v(" "),
       _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col" }, [
+        _c("div", { staticClass: "col-8" }, [
           _c(
             "button",
             {
@@ -38486,10 +38636,12 @@ var render = function() {
             },
             [_vm._v("\n                Adicionar Produto\n            ")]
           )
-        ])
+        ]),
+        _vm._v(" "),
+        _vm._m(0)
       ]),
       _vm._v(" "),
-      _vm._m(0),
+      _vm._m(1),
       _vm._v(" "),
       _vm._l(_vm.products, function(product) {
         return _c("div", { key: product.id, staticClass: "list-group" }, [
@@ -38497,6 +38649,7 @@ var render = function() {
             "a",
             {
               staticClass: "list-group-item list-group-item-action",
+              class: { "list-group-item-danger": product.quantity <= 100 },
               attrs: { href: "#" }
             },
             [
@@ -38594,7 +38747,7 @@ var render = function() {
                   ]
                 ),
                 _vm._v(" "),
-                _vm._m(1)
+                _vm._m(2)
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
@@ -38736,6 +38889,16 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-4" }, [
+      _c("span", { staticClass: "text-danger" }, [
+        _vm._v("Produtos com estoque baixo")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("div", { staticClass: "row" }, [
       _c("div", { staticClass: "col-8 " }, [_vm._v("SKU - Produto")]),
       _vm._v(" "),
@@ -38782,9 +38945,203 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_vm._v("\n    transaction\n")])
+  return _c("div", { staticClass: "row justify-content-center" }, [
+    _c("div", { staticClass: "col-3 text-center" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-block btn-secondary",
+          attrs: { type: "button" },
+          on: { click: _vm.onAdd }
+        },
+        [_vm._v("\n            Adicionar Produto\n        ")]
+      )
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "col-3 text-center" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-block btn-secondary",
+          attrs: { type: "button" },
+          on: { click: _vm.onSend }
+        },
+        [_vm._v("\n            Enviar Produto\n        ")]
+      )
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        ref: "transModal",
+        staticClass: "modal fade",
+        attrs: { id: "transModal", tabindex: "-1" }
+      },
+      [
+        _c("div", { staticClass: "modal-dialog" }, [
+          _c("div", { staticClass: "modal-content" }, [
+            _c("div", { staticClass: "modal-header" }, [
+              _c(
+                "h5",
+                {
+                  staticClass: "modal-title",
+                  attrs: { id: "transModalLabel" }
+                },
+                [
+                  _vm._v(
+                    "\n                        " +
+                      _vm._s(_vm.modalTitle) +
+                      "\n                    "
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _vm._m(0)
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-body" }, [
+              _c("div", { staticClass: "form-group" }, [
+                _c(
+                  "label",
+                  { staticClass: "form-label", attrs: { for: "skuEdit" } },
+                  [_vm._v("SKU")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.productData.sku,
+                      expression: "productData.sku"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  class: { "is-invalid": _vm.skuInvalid },
+                  attrs: { type: "text", id: "skuEdit" },
+                  domProps: { value: _vm.productData.sku },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.productData, "sku", $event.target.value)
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "invalid-feedback",
+                    attrs: { id: "validationServer04Feedback" }
+                  },
+                  [
+                    _vm._v(
+                      "\n                            O SKU já existe no cadastro de produtos.\n                        "
+                    )
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group" }, [
+                _c(
+                  "label",
+                  { staticClass: "form-label", attrs: { for: "nameEdit" } },
+                  [_vm._v("Quantidade")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.productData.name,
+                      expression: "productData.name"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  class: { "is-invalid": _vm.qtdInvalid },
+                  attrs: { type: "number", id: "qtdEdit" },
+                  domProps: { value: _vm.productData.name },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.productData, "name", $event.target.value)
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "invalid-feedback",
+                    attrs: { id: "validationServer04Feedback" }
+                  },
+                  [
+                    _vm._v(
+                      "\n                            O nome não pode ser em branco..\n                        "
+                    )
+                  ]
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-footer" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-secondary",
+                  attrs: { type: "button", "data-dismiss": "modal" }
+                },
+                [
+                  _vm._v(
+                    "\n                        Fechar\n                    "
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  attrs: { type: "button" },
+                  on: { click: _vm.onSave }
+                },
+                [
+                  _vm._v(
+                    "\n                        Salvar\n                    "
+                  )
+                ]
+              )
+            ])
+          ])
+        ])
+      ]
+    )
+  ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  }
+]
 render._withStripped = true
 
 

@@ -26,7 +26,7 @@ export default {
     },
     data() {
         return {
-            selectComponent: "products"
+            selectComponent: "transaction"
         };
     },
     methods: {

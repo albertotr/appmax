@@ -60,7 +60,7 @@ export default {
                     this.$router.push("/");
                 })
                 .catch(error => {
-                    alert(error);
+                    alert(error.response.data.error);
                 });
         }
     },

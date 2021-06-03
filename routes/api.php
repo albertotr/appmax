@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,4 +20,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('/product', [ProductController::class, 'store']);
     Route::post('/product', [ProductController::class, 'create']);
     Route::delete('/product/{product}', [ProductController::class, 'destroy']);
+
+    Route::get('/transaction', [TransactionController::class, 'index']);
+
+    Route::post('/adicionar-produtos', [TransactionController::class, 'create']);
+    Route::post('/baixar-produtos', [TransactionController::class, 'create']);
+
+    Route::post('/transaction/{type}', [TransactionController::class, 'create']);
 });

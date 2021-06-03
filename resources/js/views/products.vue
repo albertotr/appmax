@@ -2,10 +2,13 @@
     <div>
         <h4>Lista de Produtos</h4>
         <div class="row">
-            <div class="col">
+            <div class="col-8">
                 <button type="button" class="btn btn-primary" @click="onAdd">
                     Adicionar Produto
                 </button>
+            </div>
+            <div class="col-4">
+                <span class="text-danger">Produtos com estoque baixo</span>
             </div>
         </div>
         <div class="row">
@@ -13,7 +16,11 @@
             <div class="col-4">Estoque</div>
         </div>
         <div class="list-group" v-for="product in products" :key="product.id">
-            <a href="#" class="list-group-item list-group-item-action">
+            <a
+                href="#"
+                class="list-group-item list-group-item-action"
+                :class="{ 'list-group-item-danger': product.quantity <= 100 }"
+            >
                 <div class="row">
                     <div class="col-8">
                         {{ product.sku }} - {{ product.name }}

@@ -11,6 +11,8 @@ class Transaction extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = ['origin', 'amount', 'product_id'];
+
     public function product()
     {
         return $this->belongsTo(Product::class);

@@ -2445,6 +2445,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "transaction",
   data: function data() {
@@ -2456,7 +2466,8 @@ __webpack_require__.r(__webpack_exports__);
       qtdInvalid: false,
       skuInvalid: false,
       modalTitle: "",
-      addType: null
+      addType: null,
+      productQTD: 999
     };
   },
   methods: {
@@ -2465,10 +2476,10 @@ __webpack_require__.r(__webpack_exports__);
 
       var tk = localStorage.getItem("token");
       var formData = this.productData;
-      var url = "api/down";
-      if (this.addType == "add") url = "api/up";
+      var url = "api/transaction/decrease";
+      if (this.addType == "add") url = "api/transaction/increase";
       var param = {
-        method: typeRequest,
+        method: "POST",
         url: url,
         headers: {
           Authorization: "Bearer ".concat(tk)
@@ -2476,8 +2487,8 @@ __webpack_require__.r(__webpack_exports__);
         data: formData
       };
       axios(param).then(function (result) {
-        console.log(result);
-        var modal = _this.$refs.editModal;
+        _this.productQTD = result.data.data.product.quantity;
+        var modal = _this.$refs.transModal;
         $(modal).modal("hide");
       })["catch"](function (error) {
         alert(error.message);
@@ -38970,6 +38981,31 @@ var render = function() {
       )
     ]),
     _vm._v(" "),
+    _c("div", { staticClass: "col-7 pt-3" }, [
+      _c(
+        "div",
+        {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.productQTD < 100,
+              expression: "productQTD < 100"
+            }
+          ],
+          staticClass: "alert alert-danger",
+          attrs: { role: "alert" }
+        },
+        [
+          _vm._v(
+            "\n            O produto chegou ao nivel de alerta com apenas\n            " +
+              _vm._s(_vm.productQTD) +
+              " items em estoque\n        "
+          )
+        ]
+      )
+    ]),
+    _vm._v(" "),
     _c(
       "div",
       {
@@ -39056,20 +39092,20 @@ var render = function() {
                     {
                       name: "model",
                       rawName: "v-model",
-                      value: _vm.productData.name,
-                      expression: "productData.name"
+                      value: _vm.productData.qtd,
+                      expression: "productData.qtd"
                     }
                   ],
                   staticClass: "form-control",
                   class: { "is-invalid": _vm.qtdInvalid },
                   attrs: { type: "number", id: "qtdEdit" },
-                  domProps: { value: _vm.productData.name },
+                  domProps: { value: _vm.productData.qtd },
                   on: {
                     input: function($event) {
                       if ($event.target.composing) {
                         return
                       }
-                      _vm.$set(_vm.productData, "name", $event.target.value)
+                      _vm.$set(_vm.productData, "qtd", $event.target.value)
                     }
                   }
                 }),

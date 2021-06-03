@@ -19,6 +19,16 @@
                 Enviar Produto
             </button>
         </div>
+        <div class="col-7 pt-3">
+            <div
+                class="alert alert-danger"
+                role="alert"
+                v-show="productQTD < 100"
+            >
+                O produto chegou ao nivel de alerta com apenas
+                {{ productQTD }} items em estoque
+            </div>
+        </div>
 
         <!-- Modal transaction -->
         <div class="modal fade" id="transModal" tabindex="-1" ref="transModal">
@@ -64,7 +74,7 @@
                                 class="form-control"
                                 :class="{ 'is-invalid': qtdInvalid }"
                                 id="qtdEdit"
-                                v-model="productData.name"
+                                v-model="productData.qtd"
                             />
                             <div
                                 id="validationServer04Feedback"
@@ -105,7 +115,8 @@ export default {
             qtdInvalid: false,
             skuInvalid: false,
             modalTitle: "",
-            addType: null
+            addType: null,
+            productQTD: 999
         };
     },
     methods: {
@@ -113,11 +124,11 @@ export default {
             const tk = localStorage.getItem("token");
             const formData = this.productData;
 
-            let url = "api/down";
-            if (this.addType == "add") url = "api/up";
+            let url = "api/transaction/decrease";
+            if (this.addType == "add") url = "api/transaction/increase";
 
             var param = {
-                method: typeRequest,
+                method: "POST",
                 url: url,
                 headers: {
                     Authorization: `Bearer ${tk}`
@@ -127,8 +138,8 @@ export default {
 
             axios(param)
                 .then(result => {
-                    console.log(result);
-                    let modal = this.$refs.editModal;
+                    this.productQTD = result.data.data.product.quantity;
+                    let modal = this.$refs.transModal;
                     $(modal).modal("hide");
                 })
                 .catch(error => {

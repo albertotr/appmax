@@ -40,7 +40,7 @@ export default {
     name: "Login",
     data() {
         return {
-            email: "shayes@example.com",
+            email: "default@test.com",
             password: "password"
         };
     },

@@ -1919,7 +1919,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   name: "Login",
   data: function data() {
     return {
-      email: "shayes@example.com",
+      email: "default@test.com",
       password: "password"
     };
   },
@@ -1972,8 +1972,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "Home"
+  name: "Home",
+  methods: {
+    onLogout: function onLogout() {
+      var _this = this;
+
+      this.$store.dispatch("logout").then(function () {
+        _this.$router.push("/login");
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -37905,9 +37924,42 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_vm._v("\n    Home\n")])
+  return _c("div", [
+    _c("ul", { staticClass: "nav justify-content-center" }, [
+      _vm._m(0),
+      _vm._v(" "),
+      _vm._m(1),
+      _vm._v(" "),
+      _c("li", { staticClass: "nav-item" }, [
+        _c("a", { staticClass: "nav-link", on: { click: _vm.onLogout } }, [
+          _vm._v("logout")
+        ])
+      ])
+    ])
+  ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", { staticClass: "nav-item" }, [
+      _c("a", { staticClass: "nav-link active", attrs: { href: "#" } }, [
+        _vm._v("Active")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("li", { staticClass: "nav-item" }, [
+      _c("a", { staticClass: "nav-link", attrs: { href: "#" } }, [
+        _vm._v("Link")
+      ])
+    ])
+  }
+]
 render._withStripped = true
 
 

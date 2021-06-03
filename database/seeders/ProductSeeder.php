@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -15,15 +16,15 @@ class ProductSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('products')->insert([
+        Product::create([
             'name' => 'Papel',
-            'sku' => Str::random(5),
+            'sku' => 'sku80',
             'quantity' => 10
         ]);
 
-        DB::table('products')->insert([
+        Product::create([
             'name' => 'Plastico',
-            'sku' => Str::random(5),
+            'sku' => 'sku13',
             'quantity' => 235
         ]);
     }

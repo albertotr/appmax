@@ -2,9 +2,7 @@
     <div class="row justify-content-center">
         <div class="col-5">
             <h3>Autenticação</h3>
-            <label for="exampleFormControlInput1" class="form-label"
-                >Email address</label
-            >
+            <label for="authEmailInput" class="form-label">Email address</label>
             <input
                 type="email"
                 class="form-control"
@@ -13,9 +11,7 @@
                 v-model="email"
             />
 
-            <label for="exampleFormControlInput1" class="form-label"
-                >Senha</label
-            >
+            <label for="authPassInput" class="form-label">Senha</label>
             <input
                 type="password"
                 class="form-control"

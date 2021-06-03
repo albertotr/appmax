@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Transaction;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -18,25 +19,25 @@ class TransactionSeeder extends Seeder
         /**
          * products papel seed
          */
-        DB::table('transactions')->insert([
+        Transaction::create([
             'origin' => 'I',
             'amount' => '5',
             'product_id' => 1
         ]);
 
-        DB::table('transactions')->insert([
+        Transaction::create([
             'origin' => 'I',
             'amount' => '100',
             'product_id' => 1
         ]);
 
-        DB::table('transactions')->insert([
+        Transaction::create([
             'origin' => 'I',
             'amount' => '-45',
             'product_id' => 1
         ]);
 
-        DB::table('transactions')->insert([
+        Transaction::create([
             'origin' => 'A',
             'amount' => '-50',
             'product_id' => 1
@@ -45,31 +46,31 @@ class TransactionSeeder extends Seeder
         /**
          * product platico seed
          */
-        DB::table('transactions')->insert([
+        Transaction::create([
             'origin' => 'I',
             'amount' => '1530',
             'product_id' => 2
         ]);
 
-        DB::table('transactions')->insert([
+        Transaction::create([
             'origin' => 'A',
             'amount' => '-133',
             'product_id' => 2
         ]);
 
-        DB::table('transactions')->insert([
+        Transaction::create([
             'origin' => 'A',
             'amount' => '-45',
             'product_id' => 2
         ]);
 
-        DB::table('transactions')->insert([
+        Transaction::create([
             'origin' => 'I',
             'amount' => '40',
             'product_id' => 2
         ]);
 
-        DB::table('transactions')->insert([
+        Transaction::create([
             'origin' => 'I',
             'amount' => '-1139',
             'product_id' => 2

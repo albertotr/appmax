@@ -2,6 +2,13 @@
     <div>
         <h4>Lista de Produtos</h4>
         <div class="row">
+            <div class="col">
+                <button type="button" class="btn btn-primary" @click="onAdd">
+                    Adicionar Produto
+                </button>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-8 ">SKU - Produto</div>
             <div class="col-4">Estoque</div>
         </div>
@@ -23,7 +30,11 @@
                             >
                                 Editar
                             </button>
-                            <button type="button" class="btn btn-danger">
+                            <button
+                                type="button"
+                                class="btn btn-danger"
+                                @click="onDelete(product.id)"
+                            >
                                 Excluir
                             </button>
                         </div>
@@ -38,7 +49,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="editModalLabel">
-                            Edição de Produto
+                            {{ modalTitle }}
                         </h5>
                         <button
                             type="button"
@@ -82,8 +93,7 @@
                                 id="validationServer04Feedback"
                                 class="invalid-feedback"
                             >
-                                O nome não pode ser em branco ou igual ao de
-                                outro produto.
+                                O nome não pode ser em branco..
                             </div>
                         </div>
                     </div>
@@ -118,11 +128,13 @@ export default {
             products: null,
             productSelected: { id: null, sku: null, name: null },
             skuInvalid: false,
-            nameInvalid: false
+            nameInvalid: false,
+            modalTitle: "Editar produto"
         };
     },
     methods: {
         onEdit(productId) {
+            this.modalTitle = "Editar produto";
             this.skuInvalid = false;
             this.nameInvalid = false;
 
@@ -141,6 +153,107 @@ export default {
         },
         onSave() {
             let v = this;
+
+            if (!this.checkModalData()) return false;
+
+            const tk = localStorage.getItem("token");
+            const formData = this.productSelected;
+
+            let typeRequest = "PUT";
+            if (this.productSelected.id == 0) typeRequest = "POST";
+
+            var param = {
+                method: typeRequest,
+                url: "/api/product",
+                headers: {
+                    Authorization: `Bearer ${tk}`
+                },
+                data: formData
+            };
+
+            axios(param)
+                .then(result => {
+                    if (typeRequest == "PUT") {
+                        let product = this.products.filter(function(prod) {
+                            return prod.id == v.productSelected.id;
+                        });
+
+                        product[0].name = this.productSelected.name.trim();
+                        product[0].sku = this.productSelected.sku.trim();
+                    } else {
+                        this.products.push(result.data.data);
+                    }
+
+                    let modal = this.$refs.editModal;
+                    $(modal).modal("hide");
+                })
+                .catch(error => {
+                    if (error.response.status == 403) {
+                        this.$router.replace({ path: "/login" });
+                    } else if (error.response.status == 400) {
+                        alert(
+                            "Erro ao salvar o registro, verifique os dados digitados."
+                        );
+                    } else {
+                        alert(error.message);
+                    }
+                });
+        },
+        onDelete(id) {
+            let v = this;
+            let confirmation = confirm("Deseja realmente excluir o registro?");
+            if (confirmation) {
+                const tk = localStorage.getItem("token");
+
+                var param = {
+                    method: "DELETE",
+                    url: `/api/product/${id}`,
+                    headers: {
+                        Authorization: `Bearer ${tk}`
+                    }
+                };
+
+                axios(param)
+                    .then(() => {
+                        let prodToRemove = this.products.filter(function(prod) {
+                            return prod.id == id;
+                        });
+                        let prodIndex = this.products.indexOf(prodToRemove[0]);
+                        this.products.splice(prodIndex, 1);
+
+                        let modal = this.$refs.editModal;
+                        $(modal).modal("hide");
+                    })
+                    .catch(error => {
+                        if (error.response.status == 403) {
+                            this.$router.replace({ path: "/login" });
+                        } else if (error.response.status == 400) {
+                            alert(
+                                "Erro ao salvar o registro, verifique os dados digitados."
+                            );
+                        } else {
+                            alert(error.message);
+                        }
+                    });
+            } else {
+                console.log("desisti");
+            }
+        },
+        onAdd() {
+            this.modalTitle = "Adicionar produto";
+            this.skuInvalid = false;
+            this.nameInvalid = false;
+
+            this.productSelected.id = 0;
+            this.productSelected.sku = "";
+            this.productSelected.name = "";
+
+            // abre o modal de edicao
+            let modal = this.$refs.editModal;
+            $(modal).modal("show");
+        },
+        checkModalData() {
+            let v = this;
             let erroValidacao = false;
 
             //verifica se SKU já existe cadastrado
@@ -151,7 +264,7 @@ export default {
                 );
             });
 
-            if (existeSKU.length) {
+            if (existeSKU.length || this.productSelected.sku.trim() === "") {
                 this.skuInvalid = true;
                 erroValidacao = true;
             } else {
@@ -159,15 +272,7 @@ export default {
                 erroValidacao = false;
             }
 
-            //verifica se Nome já existe cadastrado ou esta em branco
-            let existeName = this.products.filter(function(prod) {
-                return (
-                    prod.name == v.productSelected.name &&
-                    prod.id != v.productSelected.id
-                );
-            });
-
-            if (existeName.length || this.productSelected.name.trim() === "") {
+            if (this.productSelected.name.trim() === "") {
                 this.nameInvalid = true;
                 erroValidacao = true;
             } else {
@@ -176,39 +281,7 @@ export default {
 
             if (erroValidacao) return false;
 
-            const tk = localStorage.getItem("token");
-            const formData = this.productSelected;
-
-            var param = {
-                method: "PUT",
-                url: "/api/product",
-                headers: {
-                    Authorization: `Bearer ${tk}`
-                },
-                data: formData
-            };
-
-            axios(param)
-                .then(result => {
-                    console.info(result);
-                })
-                .catch(error => {
-                    console.error(error);
-                    if (error.response.status == 403) {
-                        this.$router.replace({ path: "/login" });
-                    }
-                    alert(error.response.statusText);
-                });
-
-            let product = this.products.filter(function(prod) {
-                return prod.id == v.productSelected.id;
-            });
-
-            product[0].name = this.productSelected.name.trim();
-            product[0].sku = this.productSelected.sku.trim();
-
-            let modal = this.$refs.editModal;
-            $(modal).modal("hide");
+            return true;
         }
     },
     mounted() {

@@ -23,9 +23,19 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        try {
+            $product = Product::create([
+                'name' => $request->name,
+                'sku' => $request->sku
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => "Problemas ao criar o registro", "data" => $e], 400);
+        }
+
+        $returnProduct = Product::find($product->id);
+        return response()->json(['success' => true, 'data' => $returnProduct], 200);
     }
 
     /**
@@ -36,7 +46,19 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        return response($request);
+        $product = Product::find($request->id);
+
+        if (empty($product)) return response()->json(['success' => false, 'error' => "Codigo do produto inexistente"], 400);
+
+        try {
+            $product->name = $request->name;
+            $product->sku = $request->sku;
+            $product->save();
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => "Problemas ao salvar o registro", "data" => $e->getCode()], 400);
+        }
+
+        return response()->json(['success' => true, 'data' => $product], 200);
     }
 
     /**
@@ -79,8 +101,14 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Product $product)
     {
-        //
+        try {
+            $product->delete();
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => "Problemas ao excluir o registro", "data" => $e], 400);
+        }
+
+        return response()->json(['success' => true, 'data' => $product], 200);
     }
 }

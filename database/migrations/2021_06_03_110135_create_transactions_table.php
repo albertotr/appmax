@@ -18,7 +18,6 @@ class CreateTransactionsTable extends Migration
             $table->char('origin'); // I para transacao na interface VUE e A para transacoes por api
             $table->integer('amount'); // quantidade de produtos da transacao, podendo ser de incremento (>0) ou decremento (<0)
             $table->unsignedBigInteger('product_id');
-            $table->foreign('product_id')->references('id')->on('products'); // id do produto
             $table->timestamps();
             $table->softDeletes();
         });

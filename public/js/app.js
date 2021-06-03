@@ -2137,6 +2137,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "producs",
@@ -2149,11 +2159,13 @@ __webpack_require__.r(__webpack_exports__);
         name: null
       },
       skuInvalid: false,
-      nameInvalid: false
+      nameInvalid: false,
+      modalTitle: "Editar produto"
     };
   },
   methods: {
     onEdit: function onEdit(productId) {
+      this.modalTitle = "Editar produto";
       this.skuInvalid = false;
       this.nameInvalid = false; // filtra o produto selecionado na lista
 
@@ -2171,37 +2183,13 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       var v = this;
-      var erroValidacao = false; //verifica se SKU já existe cadastrado
-
-      var existeSKU = this.products.filter(function (prod) {
-        return prod.sku == v.productSelected.sku && prod.id != v.productSelected.id;
-      });
-
-      if (existeSKU.length) {
-        this.skuInvalid = true;
-        erroValidacao = true;
-      } else {
-        this.skuInvalid = false;
-        erroValidacao = false;
-      } //verifica se Nome já existe cadastrado ou esta em branco
-
-
-      var existeName = this.products.filter(function (prod) {
-        return prod.name == v.productSelected.name && prod.id != v.productSelected.id;
-      });
-
-      if (existeName.length || this.productSelected.name.trim() === "") {
-        this.nameInvalid = true;
-        erroValidacao = true;
-      } else {
-        this.nameInvalid = false;
-      }
-
-      if (erroValidacao) return false;
+      if (!this.checkModalData()) return false;
       var tk = localStorage.getItem("token");
       var formData = this.productSelected;
+      var typeRequest = "PUT";
+      if (this.productSelected.id == 0) typeRequest = "POST";
       var param = {
-        method: "PUT",
+        method: typeRequest,
         url: "/api/product",
         headers: {
           Authorization: "Bearer ".concat(tk)
@@ -2209,29 +2197,112 @@ __webpack_require__.r(__webpack_exports__);
         data: formData
       };
       axios__WEBPACK_IMPORTED_MODULE_0___default()(param).then(function (result) {
-        console.info(result);
-      })["catch"](function (error) {
-        console.error(error);
+        if (typeRequest == "PUT") {
+          var product = _this.products.filter(function (prod) {
+            return prod.id == v.productSelected.id;
+          });
 
+          product[0].name = _this.productSelected.name.trim();
+          product[0].sku = _this.productSelected.sku.trim();
+        } else {
+          _this.products.push(result.data.data);
+        }
+
+        var modal = _this.$refs.editModal;
+        $(modal).modal("hide");
+      })["catch"](function (error) {
         if (error.response.status == 403) {
           _this.$router.replace({
             path: "/login"
           });
+        } else if (error.response.status == 400) {
+          alert("Erro ao salvar o registro, verifique os dados digitados.");
+        } else {
+          alert(error.message);
         }
+      });
+    },
+    onDelete: function onDelete(id) {
+      var _this2 = this;
 
-        alert(error.response.statusText);
-      });
-      var product = this.products.filter(function (prod) {
-        return prod.id == v.productSelected.id;
-      });
-      product[0].name = this.productSelected.name.trim();
-      product[0].sku = this.productSelected.sku.trim();
+      var v = this;
+      var confirmation = confirm("Deseja realmente excluir o registro?");
+
+      if (confirmation) {
+        var tk = localStorage.getItem("token");
+        var param = {
+          method: "DELETE",
+          url: "/api/product/".concat(id),
+          headers: {
+            Authorization: "Bearer ".concat(tk)
+          }
+        };
+        axios__WEBPACK_IMPORTED_MODULE_0___default()(param).then(function () {
+          var prodToRemove = _this2.products.filter(function (prod) {
+            return prod.id == id;
+          });
+
+          var prodIndex = _this2.products.indexOf(prodToRemove[0]);
+
+          _this2.products.splice(prodIndex, 1);
+
+          var modal = _this2.$refs.editModal;
+          $(modal).modal("hide");
+        })["catch"](function (error) {
+          if (error.response.status == 403) {
+            _this2.$router.replace({
+              path: "/login"
+            });
+          } else if (error.response.status == 400) {
+            alert("Erro ao salvar o registro, verifique os dados digitados.");
+          } else {
+            alert(error.message);
+          }
+        });
+      } else {
+        console.log("desisti");
+      }
+    },
+    onAdd: function onAdd() {
+      this.modalTitle = "Adicionar produto";
+      this.skuInvalid = false;
+      this.nameInvalid = false;
+      this.productSelected.id = 0;
+      this.productSelected.sku = "";
+      this.productSelected.name = ""; // abre o modal de edicao
+
       var modal = this.$refs.editModal;
-      $(modal).modal("hide");
+      $(modal).modal("show");
+    },
+    checkModalData: function checkModalData() {
+      var v = this;
+      var erroValidacao = false; //verifica se SKU já existe cadastrado
+
+      var existeSKU = this.products.filter(function (prod) {
+        return prod.sku == v.productSelected.sku && prod.id != v.productSelected.id;
+      });
+
+      if (existeSKU.length || this.productSelected.sku.trim() === "") {
+        this.skuInvalid = true;
+        erroValidacao = true;
+      } else {
+        this.skuInvalid = false;
+        erroValidacao = false;
+      }
+
+      if (this.productSelected.name.trim() === "") {
+        this.nameInvalid = true;
+        erroValidacao = true;
+      } else {
+        this.nameInvalid = false;
+      }
+
+      if (erroValidacao) return false;
+      return true;
     }
   },
   mounted: function mounted() {
-    var _this2 = this;
+    var _this3 = this;
 
     var v = this;
     var tk = localStorage.getItem("token");
@@ -2243,10 +2314,10 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
     axios__WEBPACK_IMPORTED_MODULE_0___default()(param).then(function (result) {
-      _this2.products = result.data;
+      _this3.products = result.data;
     })["catch"](function (error) {
       if (error.response.status == 403) {
-        _this2.$router.replace({
+        _this3.$router.replace({
           path: "/login"
         });
       }
@@ -38404,6 +38475,20 @@ var render = function() {
     [
       _c("h4", [_vm._v("Lista de Produtos")]),
       _vm._v(" "),
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col" }, [
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-primary",
+              attrs: { type: "button" },
+              on: { click: _vm.onAdd }
+            },
+            [_vm._v("\n                Adicionar Produto\n            ")]
+          )
+        ])
+      ]),
+      _vm._v(" "),
       _vm._m(0),
       _vm._v(" "),
       _vm._l(_vm.products, function(product) {
@@ -38461,7 +38546,12 @@ var render = function() {
                         "button",
                         {
                           staticClass: "btn btn-danger",
-                          attrs: { type: "button" }
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              return _vm.onDelete(product.id)
+                            }
+                          }
                         },
                         [
                           _vm._v(
@@ -38488,7 +38578,24 @@ var render = function() {
         [
           _c("div", { staticClass: "modal-dialog" }, [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(1),
+              _c("div", { staticClass: "modal-header" }, [
+                _c(
+                  "h5",
+                  {
+                    staticClass: "modal-title",
+                    attrs: { id: "editModalLabel" }
+                  },
+                  [
+                    _vm._v(
+                      "\n                        " +
+                        _vm._s(_vm.modalTitle) +
+                        "\n                    "
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _vm._m(1)
+              ]),
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
                 _c("div", { staticClass: "form-group" }, [
@@ -38581,7 +38688,7 @@ var render = function() {
                     },
                     [
                       _vm._v(
-                        "\n                            O nome não pode ser em branco ou igual ao de\n                            outro produto.\n                        "
+                        "\n                            O nome não pode ser em branco..\n                        "
                       )
                     ]
                   )
@@ -38639,30 +38746,18 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c(
-        "h5",
-        { staticClass: "modal-title", attrs: { id: "editModalLabel" } },
-        [
-          _vm._v(
-            "\n                        Edição de Produto\n                    "
-          )
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: {
-            type: "button",
-            "data-dismiss": "modal",
-            "aria-label": "Close"
-          }
-        },
-        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-      )
-    ])
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
   }
 ]
 render._withStripped = true

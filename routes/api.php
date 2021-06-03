@@ -17,4 +17,6 @@ use App\Http\Controllers\ProductController;
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/product', [ProductController::class, 'index']);
     Route::put('/product', [ProductController::class, 'store']);
+    Route::post('/product', [ProductController::class, 'create']);
+    Route::delete('/product/{product}', [ProductController::class, 'destroy']);
 });

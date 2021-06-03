@@ -20,5 +20,10 @@ class DatabaseSeeder extends Seeder
             'email' => "default@test.com",
             'password' => Hash::make('password'),
         ]);
+
+        $this->call([
+            ProductSeeder::class,
+            TransactionSeeder::class
+        ]);
     }
 }

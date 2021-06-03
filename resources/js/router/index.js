@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import Store from "../store";
 import Home from "../views/home";
 import Login from "../views/Auth/login";
 
@@ -33,7 +34,14 @@ router.beforeEach((to, from, next) => {
     const requireAuth = to.matched.some(record => record.meta.requireAuth);
 
     if (requireAuth) {
-        next("login");
+        const token = localStorage.getItem("token");
+        if (token) {
+            Store.commit("setAuthenticated", token);
+        }
+
+        if (to.name !== "Login" && !Store.getters.isAuth) {
+            next("login");
+        } else next();
     } else {
         next();
     }

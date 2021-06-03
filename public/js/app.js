@@ -1849,6 +1849,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {};
@@ -1869,14 +1871,86 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "Login"
+  name: "Login",
+  data: function data() {
+    return {
+      email: "shayes@example.com",
+      password: "password"
+    };
+  },
+  methods: {
+    onAuth: function onAuth() {
+      var _this = this;
+
+      var v = this;
+      var authOptions = {
+        method: "POST",
+        url: "/auth",
+        data: {
+          email: v.email,
+          password: v.password
+        },
+        headers: {}
+      };
+      axios(authOptions).then(function (result) {
+        var token = result.data.data.token;
+
+        _this.$store.commit("setAuthenticated", token);
+
+        _this.$router.push("/");
+      })["catch"](function (error) {
+        alert(error);
+      });
+    }
+  },
+  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
+    isAuth: "isAuth"
+  }))
 });
 
 /***/ }),
@@ -1986,30 +2060,32 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
-/* harmony import */ var _views_home__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../views/home */ "./resources/js/views/home.vue");
-/* harmony import */ var _views_Auth_login__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../views/Auth/login */ "./resources/js/views/Auth/login.vue");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../store */ "./resources/js/store/index.js");
+/* harmony import */ var _views_home__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../views/home */ "./resources/js/views/home.vue");
+/* harmony import */ var _views_Auth_login__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../views/Auth/login */ "./resources/js/views/Auth/login.vue");
 /* provided dependency */ var process = __webpack_require__(/*! process/browser */ "./node_modules/process/browser.js");
 
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_2__.default.use(vue_router__WEBPACK_IMPORTED_MODULE_3__.default);
+
+vue__WEBPACK_IMPORTED_MODULE_3__.default.use(vue_router__WEBPACK_IMPORTED_MODULE_4__.default);
 var routes = [{
   path: "/",
-  component: _views_home__WEBPACK_IMPORTED_MODULE_0__.default,
+  component: _views_home__WEBPACK_IMPORTED_MODULE_1__.default,
   meta: {
     requireAuth: true
   }
 }, {
   path: "/login",
-  component: _views_Auth_login__WEBPACK_IMPORTED_MODULE_1__.default
+  component: _views_Auth_login__WEBPACK_IMPORTED_MODULE_2__.default
 }, {
   path: "*",
   redirect: "/"
 }];
-var router = new vue_router__WEBPACK_IMPORTED_MODULE_3__.default({
+var router = new vue_router__WEBPACK_IMPORTED_MODULE_4__.default({
   mode: "history",
   base: process.env.BASE_URL,
   routes: routes
@@ -2020,7 +2096,15 @@ router.beforeEach(function (to, from, next) {
   });
 
   if (requireAuth) {
-    next("login");
+    var token = localStorage.getItem("token");
+
+    if (token) {
+      _store__WEBPACK_IMPORTED_MODULE_0__.default.commit("setAuthenticated", token);
+    }
+
+    if (to.name !== "Login" && !_store__WEBPACK_IMPORTED_MODULE_0__.default.getters.isAuth) {
+      next("login");
+    } else next();
   } else {
     next();
   }
@@ -2046,10 +2130,29 @@ __webpack_require__.r(__webpack_exports__);
 
 vue__WEBPACK_IMPORTED_MODULE_0__.default.use(vuex__WEBPACK_IMPORTED_MODULE_1__.default);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_1__.default.Store({
-  state: {},
-  mutations: {},
-  actions: {},
-  getters: {},
+  state: {
+    isAuthenticated: false
+  },
+  mutations: {
+    setAuthenticated: function setAuthenticated(state, token) {
+      localStorage.setItem("token", token);
+      vue__WEBPACK_IMPORTED_MODULE_0__.default.set(state, "isAuthenticated", true);
+    },
+    logout: function logout(state) {
+      vue__WEBPACK_IMPORTED_MODULE_0__.default.set(state, "isAuthenticated", false);
+    }
+  },
+  actions: {
+    logout: function logout() {
+      this.commit("logout");
+      localStorage.clear();
+    }
+  },
+  getters: {
+    isAuth: function isAuth(state) {
+      return state.isAuthenticated;
+    }
+  },
   modules: {}
 }));
 
@@ -37670,7 +37773,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("router-view")
+  return _c("div", { staticClass: "container" }, [_c("router-view")], 1)
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -37695,7 +37798,89 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_vm._v("\n    Login component\n")])
+  return _c("div", { staticClass: "row justify-content-center" }, [
+    _c("div", { staticClass: "col-5" }, [
+      _c("h3", [_vm._v("Autenticação")]),
+      _vm._v(" "),
+      _c(
+        "label",
+        {
+          staticClass: "form-label",
+          attrs: { for: "exampleFormControlInput1" }
+        },
+        [_vm._v("Email address")]
+      ),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.email,
+            expression: "email"
+          }
+        ],
+        staticClass: "form-control",
+        attrs: {
+          type: "email",
+          id: "authEmailInput",
+          placeholder: "name@example.com"
+        },
+        domProps: { value: _vm.email },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.email = $event.target.value
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c(
+        "label",
+        {
+          staticClass: "form-label",
+          attrs: { for: "exampleFormControlInput1" }
+        },
+        [_vm._v("Senha")]
+      ),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.password,
+            expression: "password"
+          }
+        ],
+        staticClass: "form-control",
+        attrs: { type: "password", id: "authPassInput" },
+        domProps: { value: _vm.password },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.password = $event.target.value
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-primary btn-lg btn-block",
+          attrs: { type: "button" },
+          on: { click: _vm.onAuth }
+        },
+        [_vm._v("\n            Autenticar\n        ")]
+      )
+    ])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true

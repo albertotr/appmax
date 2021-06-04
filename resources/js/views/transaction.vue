@@ -6,7 +6,7 @@
                 class="btn btn-block btn-secondary"
                 @click="onAdd"
             >
-                Adicionar Produto
+                Adicionar Estoque
             </button>
         </div>
 
@@ -143,7 +143,7 @@ export default {
                     $(modal).modal("hide");
                 })
                 .catch(error => {
-                    alert(error.message);
+                    alert(error.response.data.error);
                 });
         },
         onAdd() {

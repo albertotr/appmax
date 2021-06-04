@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -17,7 +16,7 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        $transactions = Transaction::all();
+        $transactions = Transaction::orderby('created_at')->with('product')->get();
         return response()->json($transactions);
     }
 
@@ -49,6 +48,11 @@ class TransactionController extends Controller
             if ($type == 'decrease') $qtd = -1 * $qtd;
 
             $product->quantity += $qtd;
+
+            if ($product->quantity < 0) {
+                DB::rollBack();
+                return response()->json(['success' => false, 'error' => "Estoque insuficiente", "data" => null], 406);
+            }
 
             $product->save();
 

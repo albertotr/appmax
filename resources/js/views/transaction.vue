@@ -61,7 +61,7 @@
                                 id="validationServer04Feedback"
                                 class="invalid-feedback"
                             >
-                                O SKU já existe no cadastro de produtos.
+                                O SKU não pode ser informado em branco.
                             </div>
                         </div>
 
@@ -80,7 +80,8 @@
                                 id="validationServer04Feedback"
                                 class="invalid-feedback"
                             >
-                                O nome não pode ser em branco..
+                                A quantidade precisa ser um número inteiro maior
+                                que 0.
                             </div>
                         </div>
                     </div>
@@ -111,7 +112,7 @@ export default {
     name: "transaction",
     data() {
         return {
-            productData: { sku: null, qtd: null },
+            productData: { sku: "", qtd: "" },
             qtdInvalid: false,
             skuInvalid: false,
             modalTitle: "",
@@ -122,6 +123,9 @@ export default {
     methods: {
         onSave() {
             const tk = localStorage.getItem("token");
+
+            if (!this.checkModalData()) return false;
+
             const formData = this.productData;
 
             let url = "api/transaction/decrease";
@@ -150,6 +154,8 @@ export default {
             // abre o modal de edicao
             this.modalTitle = "Adicionar produto em estoque";
             this.addType = "add";
+            this.skuInvalid = false;
+            this.qtdInvalid = false;
 
             let modal = this.$refs.transModal;
             $(modal).modal("show");
@@ -158,9 +164,37 @@ export default {
             // abre o modal de edicao
             this.modalTitle = "Enviar produto";
             this.addType = "send";
+            this.skuInvalid = false;
+            this.qtdInvalid = false;
 
             let modal = this.$refs.transModal;
             $(modal).modal("show");
+        },
+        checkModalData() {
+            let erroValidacao = false;
+
+            if (this.productData.sku.trim() === "") {
+                this.skuInvalid = true;
+                erroValidacao = true;
+            } else {
+                this.skuInvalid = false;
+                erroValidacao = false;
+            }
+
+            if (
+                this.productData.qtd.trim() === "" ||
+                this.productData.qtd <= 0 ||
+                !Number.isInteger(parseFloat(this.productData.qtd))
+            ) {
+                this.qtdInvalid = true;
+                erroValidacao = true;
+            } else {
+                this.qtdInvalid = false;
+            }
+
+            if (erroValidacao) return false;
+
+            return true;
         }
     }
 };

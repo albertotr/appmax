@@ -2,10 +2,19 @@
     <div>
         <ul class="nav justify-content-center">
             <li class="nav-item">
-                <a class="nav-link" @click="onProducts">Produtos</a>
+                <a class="nav-link" @click="selectComponent = 'products'"
+                    >Produtos</a
+                >
             </li>
             <li class="nav-item">
-                <a class="nav-link" @click="onTransaction">Movimentação</a>
+                <a class="nav-link" @click="selectComponent = 'transaction'"
+                    >Movimentação</a
+                >
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" @click="selectComponent = 'report'"
+                    >Relatório</a
+                >
             </li>
             <li class="nav-item">
                 <a class="nav-link" @click="onLogout">logout</a>
@@ -18,15 +27,17 @@
 <script>
 import products from "./products";
 import transaction from "./transaction";
+import report from "./report";
 export default {
     name: "Home",
     components: {
         products,
-        transaction
+        transaction,
+        report
     },
     data() {
         return {
-            selectComponent: "transaction"
+            selectComponent: "report"
         };
     },
     methods: {
@@ -34,12 +45,6 @@ export default {
             this.$store.dispatch("logout").then(() => {
                 this.$router.push("/login");
             });
-        },
-        onProducts() {
-            this.selectComponent = "products";
-        },
-        onTransaction() {
-            this.selectComponent = "transaction";
         }
     }
 };

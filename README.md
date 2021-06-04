@@ -61,7 +61,7 @@ São 5 testes executados e a documentação, está descrina no código dos teste
 
 ### Rodar frontend VueJS em modo desenvolvimento
 
-Para isto é necessário possuir o NodeJS (npm) instalado, e então na raiz do projeto, rodar o seguinte comando:
+Para isto é necessário possuir o NodeJS (npm) instalado, e então na raiz do projeto instalar as dependencias com o comando npm install e depois, rodar o seguinte comando:
 
 -   compilação unica
     -   \$ npm run dev

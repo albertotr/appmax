@@ -18,8 +18,24 @@ export default new Vuex.Store({
     },
     actions: {
         logout() {
-            this.commit("logout");
-            localStorage.clear();
+            let vue = this;
+            const tk = localStorage.getItem("token");
+            var authOptions = {
+                method: "GET",
+                url: "/logout",
+                headers: {
+                    Authorization: `Bearer ${tk}`
+                }
+            };
+
+            axios(authOptions)
+                .then(result => {
+                    vue.commit("logout");
+                    localStorage.clear();
+                })
+                .catch(error => {
+                    alert(error.response.data.error);
+                });
         }
     },
     getters: {
